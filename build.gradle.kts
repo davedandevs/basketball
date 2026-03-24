@@ -35,18 +35,24 @@ dependencies {
     // Spring Boot
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-web")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-security")
-    implementation(group = "org.springframework.boot", name = "spring-boot-configuration-processor")
+    annotationProcessor(group = "org.springframework.boot", name = "spring-boot-configuration-processor")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-oauth2-resource-server")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-jdbc")
     implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-jpa")
+    implementation(group = "org.springframework.boot", name = "spring-boot-starter-data-rest")
     developmentOnly(group = "org.springframework.boot", name = "spring-boot-devtools")
 
     // Swagger
     implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version = "2.6.0")
 
-    // Lombok
-    compileOnly(group = "org.projectlombok", name = "lombok")
-    annotationProcessor(group = "org.projectlombok", name = "lombok")
+    // JWT
+    implementation(group = "io.jsonwebtoken", name = "jjwt-api", version = "0.11.5")
+    implementation(group = "io.jsonwebtoken", name = "jjwt-impl", version = "0.11.5")
+    implementation(group = "io.jsonwebtoken", name = "jjwt-jackson", version = "0.11.5")
+
+    // Database
+    runtimeOnly(group = "org.postgresql", name = "postgresql")
+    implementation(group = "org.liquibase", name = "liquibase-core")
 
     // Test
     testImplementation(group = "org.springframework.boot", name = "spring-boot-starter-test")
@@ -58,16 +64,18 @@ dependencies {
     testImplementation(group = "org.springframework.security", name = "spring-security-test")
     testImplementation(group = "io.rest-assured", name = "spring-mock-mvc")
 
-    // JWT
-    implementation(group = "io.jsonwebtoken", name = "jjwt-api", version = "0.11.5")
-    implementation(group = "io.jsonwebtoken", name = "jjwt-impl", version = "0.11.5")
-    implementation(group = "io.jsonwebtoken", name = "jjwt-jackson", version = "0.11.5")
+    // Lombok
+    compileOnly(group = "org.projectlombok", name = "lombok")
+    annotationProcessor(group = "org.projectlombok", name = "lombok")
+    testCompileOnly(group = "org.projectlombok", name = "lombok")
+    testAnnotationProcessor(group = "org.projectlombok", name = "lombok")
 
-    // Database
-    runtimeOnly(group = "org.postgresql", name = "postgresql")
-    implementation(group = "org.liquibase", name = "liquibase-core")
+    // MapStruct
+    implementation(group = "org.mapstruct", name = "mapstruct", version = "1.5.5.Final")
+    annotationProcessor(group = "org.mapstruct", name = "mapstruct-processor", version = "1.5.5.Final")
+    testImplementation(group = "org.mapstruct", name = "mapstruct", version = "1.5.5.Final")
+    testAnnotationProcessor(group = "org.mapstruct", name = "mapstruct-processor", version = "1.5.5.Final")
 }
-
 
 val jacocoExcludedClasses = listOf(
     "**/dto/**",

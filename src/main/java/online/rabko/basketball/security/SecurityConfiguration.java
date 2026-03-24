@@ -1,8 +1,8 @@
-package online.rabko.basketball.config;
+package online.rabko.basketball.security;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import online.rabko.basketball.service.UserService;
+import online.rabko.basketball.service.basketball.BasketballAppUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -34,7 +34,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserService userService;
+    private final BasketballAppUserService basketballAppUserService;
 
     /**
      * Configures the main security filter chain: - Disables CSRF - Enables CORS with open wildcard
@@ -52,27 +52,42 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**",
-                    "/oas/**")
-                .permitAll()
+                    "/oas/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/matches/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/matches/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/matches/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/matches/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/players/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/players/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/players/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/players/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/seasons/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/seasons/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/seasons/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/seasons/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/teams/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/teams/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/teams/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/teams/**").hasRole("ADMIN")
+                .requestMatchers("/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
     /**
      * Defines a custom authentication provider using {@link DaoAuthenticationProvider}, wired with
-     * the application's {@link UserService} and a BCrypt password encoder.
+     * the application's {@link BasketballAppUserService} and a BCrypt password encoder.
      *
      * @return the AuthenticationProvider bean
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService.userDetailsService());
+        provider.setUserDetailsService(basketballAppUserService.userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
